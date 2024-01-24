@@ -5,6 +5,8 @@ import org.example.nutribookbe.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
     private final UserRepository repo;
@@ -13,7 +15,7 @@ public class UserService {
     public UserService(UserRepository repo) {
         this.repo = repo;
     }
-
+    //CREATE USER
     public User createUser(User user) {
         //Check if username already exists
         if (repo.existsByUsername(user.getUsername())) {
@@ -27,6 +29,21 @@ public class UserService {
 
         //save user
         return repo.save(user);
+    }
+
+    //DELETE USER
+    public void deleteUser(String id) {
+        User user = getUser(id);
+        repo.delete(user);
+    }
+
+    //FIND User BY X
+    public Optional<User> findByID(String id) {
+        return repo.findById(id);
+    }
+
+    public User findByEmail(String email) {
+        return repo.findByEmail(email);
     }
 
 
