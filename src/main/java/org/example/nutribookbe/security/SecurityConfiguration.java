@@ -49,16 +49,18 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
+        //Login
         http            //TODO Remember to check or change this
-                .addFilterBefore(new LoginFilter("/login", authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
+                .addFilterBefore(new LoginFilter("api/user/login", authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTAuthenticationFilter(),
                         UsernamePasswordAuthenticationFilter.class);
 
+        //Registration
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         //TODO Remember to check or change this
-                        .requestMatchers(HttpMethod.POST,"/user").permitAll()
+                        .requestMatchers(HttpMethod.POST,"api/user/register").permitAll()
                         .anyRequest().authenticated()
                 );
 
