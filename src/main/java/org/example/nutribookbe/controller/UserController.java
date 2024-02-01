@@ -1,5 +1,6 @@
 package org.example.nutribookbe.controller;
 
+import org.example.nutribookbe.dto.UserPostDTO;
 import org.example.nutribookbe.entity.User;
 import org.example.nutribookbe.repository.UserRepository;
 import org.example.nutribookbe.service.UserService;
@@ -49,44 +50,43 @@ public class UserController {
 
     //New Registration Handling
     @PostMapping("/register")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        if (user.getUsername() == null) {
+    public ResponseEntity<String> createUser(@RequestBody UserPostDTO newUserDTO) {
+        if (newUserDTO.getUsername() == null) {
             return new ResponseEntity<>("Username cannot be null", HttpStatus.BAD_REQUEST);
-        } else if (repo.existsByUsername(user.getUsername())) {
+        } else if (repo.existsByUsername(newUserDTO.getUsername())) {
             return new ResponseEntity<>("Username is already in use", HttpStatus.BAD_REQUEST);
-        } else if (user.getEmail()==null) {
+        } else if (newUserDTO.getEmail()==null) {
             return new ResponseEntity<>("Email cannot be null", HttpStatus.BAD_REQUEST);
-        } else if (repo.existsByEmail(user.getEmail())) {
+        } else if (repo.existsByEmail(newUserDTO.getEmail())) {
             return new ResponseEntity<>("Email is already in use", HttpStatus.BAD_REQUEST);
-        } else if (user.getPassword()==null) {
+        } else if (newUserDTO.getPassword()==null) {
             return new ResponseEntity<>("Password cannot be null", HttpStatus.BAD_REQUEST);
         }
 
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        userService.createUser(user);
-        return ResponseEntity.ok(user.getUsername()+ " created successfully.");
+        User newUser = new User(newUserDTO.getUsername(), newUserDTO.getEmail(), encoder.encode(newUserDTO.getPassword()));
+        userService.createUser(newUser);
+        return new  ResponseEntity<>(newUser.getUsername()+ " created successfully.", HttpStatus.CREATED);
     }
 
 
 
     //Change Username
     @PutMapping("/{id}/update-username")
-    public ResponseEntity<User> updateUsername(@PathVariable String id, @RequestBody String newUsername) {
+    public ResponseEntity<User> updateUsername(@PathVariable Long id, @RequestBody String newUsername) {
         User updatedUser = userService.updateUsername(id, newUsername);
         return ResponseEntity.ok(updatedUser);
     }
 
     //Get User by ID
     @GetMapping("/get-user/{id}")
-    public Optional<User> getUserById(@PathVariable(value = "id") String id) {
+    public Optional<User> getUserById(@PathVariable(value = "id") Long id) {
         return userService.findByID(id);
     }
 
     //Delete User by ID
     @DeleteMapping("/{id}/delete-user")
-    public String deleteUser(@PathVariable String id) {
+    public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return "User Deleted";
     }
@@ -99,14 +99,14 @@ public class UserController {
 
     //Change Email
     @PutMapping("/{id}/update-email")
-    public ResponseEntity<User> updateEmail(@PathVariable(value = "id") String id, @RequestBody String newEmail) {
+    public ResponseEntity<User> updateEmail(@PathVariable(value = "id") Long id, @RequestBody String newEmail) {
         User updatedUser = userService.updateEmail(id, newEmail);
         return ResponseEntity.ok(updatedUser);
     }
 
     //Change Password
     @PutMapping("/{id}/update-password")
-    public ResponseEntity<User> updatePassword(@PathVariable String id, @RequestBody String newPassword) {
+    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody String newPassword) {
         User updatedUser = userService.updatePassword(id, newPassword);
         return ResponseEntity.ok(updatedUser);
     }

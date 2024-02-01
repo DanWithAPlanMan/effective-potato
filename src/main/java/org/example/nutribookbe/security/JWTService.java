@@ -27,6 +27,7 @@ public class JWTService {
                         + EXPIRATIONTIME))
                 .signWith(key)
                 .compact();
+        //TODO Print the created token to console
         System.out.println("Created token: [" + JwtToken + "]");
         res.addHeader("Authorization", PREFIX + " " + JwtToken);
         res.addHeader("Access-Control-Expose-Headers", "Authorization");
@@ -35,7 +36,7 @@ public class JWTService {
     // Get token from Authorization header
     static public Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        //TODO Checking Token
+        //TODO Print received token to console
         //System.out.println("Received token: [" + token + "]");
         SecretKey key = Keys.hmacShaKeyFor(SIGNINGKEY.getBytes());
 

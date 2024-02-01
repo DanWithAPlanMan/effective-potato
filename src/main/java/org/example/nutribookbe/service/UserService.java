@@ -1,10 +1,12 @@
 package org.example.nutribookbe.service;
 
 import org.example.nutribookbe.entity.User;
+import org.example.nutribookbe.exception.ResourceNotFoundException;
 import org.example.nutribookbe.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,6 +17,12 @@ public class UserService {
     public UserService(UserRepository repo) {
         this.repo = repo;
     }
+
+    //GET USERS
+    public List<User> getAllUsers() {
+        return (List<User>) repo.findAll();
+    }
+
     //CREATE USER
     public User createUser(User user) {
         //Check if username already exists
@@ -32,13 +40,13 @@ public class UserService {
     }
 
     //DELETE USER
-    public void deleteUser(String id) {
+    public void deleteUser(Long id) {
         User user = getUser(id);
         repo.delete(user);
     }
 
     //FIND User BY X
-    public Optional<User> findByID(String id) {
+    public Optional<User> findByID(Long id) {
         return repo.findById(id);
     }
 
@@ -48,7 +56,7 @@ public class UserService {
 
 
     //UPDATE USER DETAILS
-    public User updateUsername(String id, String newUsername) {
+    public User updateUsername(Long id, String newUsername) {
         //Find existing User by id
         User user = getUser(id);
 
@@ -68,7 +76,7 @@ public class UserService {
         return repo.save(user);
     }
 
-    public User updateEmail(String id, String newEmail) {
+    public User updateEmail(Long id, String newEmail) {
         //Find existing User by id
         User user = getUser(id);
 
@@ -88,7 +96,7 @@ public class UserService {
         return repo.save(user);
     }
 
-    public User updatePassword(String id, String newPassword) {
+    public User updatePassword(Long id, String newPassword) {
         //Find existing User by id
         User user = getUser(id);
 
@@ -101,9 +109,11 @@ public class UserService {
         return repo.save(user);
     }
 
-    //Used this bit 3 times thought I should separate it out
-    private User getUser(String id) {
-        return repo.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    //Used this bit 4 times thought I should separate it out
+    private User getUser(Long id) {
+        //return repo.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User","id",id));
     }
 
 }

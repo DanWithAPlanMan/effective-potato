@@ -1,38 +1,63 @@
 package org.example.nutribookbe.entity;
 
+import java.io.Serial;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import org.example.nutribookbe.UserType;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User {
+@EntityListeners(AuditingEntityListener.class)
+public class User implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     //User Attributes
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank
     private String username;
 
-    @Column(nullable = false, unique = true)
+
+    @Column(unique = true)
     private String email;
-    @Column(nullable = false)
+
+    @NotBlank
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+
+    UserType userType;
+
+    @Column(nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
+    private Date createdAt;
+
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    public User() {}
-
-    //User Constructor
-    public  User(String username, String email, String password){
-        this.username = username;
-        this.email = email;
-        this.password = password;
+    public User() {
+        super();
     }
 
-    public User(String email, String password) {
+    //User Constructor
+    public User(String username, String email, String password) {
+        super();
+        this.username = username;
         this.email = email;
         this.password = password;
     }
@@ -58,6 +83,10 @@ public class User {
         return comments;
     }
 
+    public UserType getUserType() {
+        return userType;
+    }
+
     //SETTERS
     public void setId(Long id) {
         this.id = id;
@@ -78,4 +107,6 @@ public class User {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
+
+
 }
