@@ -27,7 +27,7 @@ public class JWTService {
                         + EXPIRATIONTIME))
                 .signWith(key)
                 .compact();
-        System.out.println(JwtToken);
+        System.out.println("Created token: [" + JwtToken + "]");
         res.addHeader("Authorization", PREFIX + " " + JwtToken);
         res.addHeader("Access-Control-Expose-Headers", "Authorization");
     }
@@ -35,6 +35,8 @@ public class JWTService {
     // Get token from Authorization header
     static public Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
+        //TODO Checking Token
+        //System.out.println("Received token: [" + token + "]");
         SecretKey key = Keys.hmacShaKeyFor(SIGNINGKEY.getBytes());
 
         if (token != null) {
@@ -42,12 +44,13 @@ public class JWTService {
                 String user = Jwts.parser()
                         .verifyWith(key)
                         .build()
-                        .parseSignedClaims(token.replace("Bearer ", ""))
+                        .parseSignedClaims(token.replace("Bearer ", "").trim())
                         .getPayload()
                         .getSubject();
                 if (user != null)
                     return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
             } catch (Exception e) {
+                System.out.println("Received token: [" + token + "]");
                 System.out.println(e.getMessage());
             }
         }

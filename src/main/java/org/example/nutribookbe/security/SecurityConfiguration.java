@@ -55,11 +55,14 @@ public class SecurityConfiguration {
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTAuthenticationFilter(),
                         UsernamePasswordAuthenticationFilter.class);
+        //TODO Test Login thing
+       /* http.addFilterBefore(new LoginFilter("/api/user/login",
+                        authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
+                UsernamePasswordAuthenticationFilter.class);*/
 
         //Registration
-        http
+        http            //TODO Remember to check or change this
                 .authorizeHttpRequests((authorize) -> authorize
-                        //TODO Remember to check or change this
                         .requestMatchers(HttpMethod.POST,"api/user/register").permitAll()
                         .anyRequest().authenticated()
                 );

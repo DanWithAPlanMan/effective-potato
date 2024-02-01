@@ -23,5 +23,7 @@ public class AccountCredentials {
     }
 
     @Override
-    public String toString() {return "AccountCredentials [username="+username+", password="+password+"]";}
+    public String toString() {
+        return "AccountCredentials [username=" + username + ", password=" + password + "]";
+    }
 }

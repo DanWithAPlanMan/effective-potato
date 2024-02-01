@@ -6,6 +6,7 @@ import org.example.nutribookbe.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -26,17 +27,25 @@ public class UserController {
         return "Hello";
     }
 
-    /*//Registration Handling
-    @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        if ((user.getUsername()==null||repo.existsByUsername(user.getUsername())) ||
-                (user.getEmail()==null|| repo.existsByEmail(user.getEmail())) ||
-                (user.getPassword()==null)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    //Login Handling
+    /*@PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody User loginDetails) {
+        Optional<User> userOpt = Optional.ofNullable(repo.findByUsername(loginDetails.getUsername()));
+        if(userOpt.isPresent()){
+            User user = userOpt.get();
+            BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
+
+            if(encoder.matches(loginDetails.getPassword(), user.getPassword())){
+                return ResponseEntity.ok("User login successful");
+            } else {
+                return new ResponseEntity<>("Invalid password", HttpStatus.UNAUTHORIZED);
+            }
+        } else {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
-        User createdUser = userService.createUser(user);
-        return ResponseEntity.ok(createdUser);
     }*/
+
+
 
     //New Registration Handling
     @PostMapping("/register")
@@ -52,7 +61,11 @@ public class UserController {
         } else if (user.getPassword()==null) {
             return new ResponseEntity<>("Password cannot be null", HttpStatus.BAD_REQUEST);
         }
-        User createdUser = userService.createUser(user);
+
+        BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        userService.createUser(user);
         return ResponseEntity.ok(user.getUsername()+ " created successfully.");
     }
 
