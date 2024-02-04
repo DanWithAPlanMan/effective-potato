@@ -28,23 +28,7 @@ public class UserController {
         return "Hello";
     }
 
-    //Login Handling
-    /*@PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User loginDetails) {
-        Optional<User> userOpt = Optional.ofNullable(repo.findByUsername(loginDetails.getUsername()));
-        if(userOpt.isPresent()){
-            User user = userOpt.get();
-            BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 
-            if(encoder.matches(loginDetails.getPassword(), user.getPassword())){
-                return ResponseEntity.ok("User login successful");
-            } else {
-                return new ResponseEntity<>("Invalid password", HttpStatus.UNAUTHORIZED);
-            }
-        } else {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
-        }
-    }*/
 
 
 
