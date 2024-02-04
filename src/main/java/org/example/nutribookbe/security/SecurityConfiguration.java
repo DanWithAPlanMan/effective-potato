@@ -49,7 +49,7 @@ public class SecurityConfiguration {
 
         //Login
         http            //TODO Remember to check or change this
-                .addFilterBefore(new LoginFilter("api/user/login", authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
+                .addFilterBefore(new LoginFilter("/api/user/login", authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTAuthenticationFilter(),
                         UsernamePasswordAuthenticationFilter.class);
@@ -57,7 +57,7 @@ public class SecurityConfiguration {
         //Registration
         http            //TODO Remember to check or change this
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.POST, "api/user/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/user/register").permitAll()
                         .anyRequest().authenticated()
                 );
 
