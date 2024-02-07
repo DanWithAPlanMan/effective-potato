@@ -23,7 +23,7 @@ public class UserController {
         this.repo = repo;
     }
 
-    @GetMapping
+    @GetMapping("/hello")
     public String hello(){
         return "Hello";
     }
